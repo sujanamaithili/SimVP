@@ -20,12 +20,12 @@ def metric(pred, true, mean, std, return_ssim_psnr=False, clip_range=[0, 1]):
     mse = MSE(pred, true)
 
     if return_ssim_psnr:
-        pred = np.maximum(pred, clip_range[0])
-        pred = np.minimum(pred, clip_range[1])
+        # pred = np.maximum(pred, clip_range[0])
+        # pred = np.minimum(pred, clip_range[1])
         ssim, psnr = 0, 0
         for b in range(pred.shape[0]):
             for f in range(pred.shape[1]):
-                ssim += cal_ssim(pred[b, f].swapaxes(0, 2), true[b, f].swapaxes(0, 2), multichannel=True)
+                ssim += cal_ssim(pred[b, f].swapaxes(0,2), true[b, f].swapaxes(0,2), data_range=255.0, channel_axis = 2)
                 psnr += PSNR(pred[b, f], true[b, f])
         ssim = ssim / (pred.shape[0] * pred.shape[1])
         psnr = psnr / (pred.shape[0] * pred.shape[1])
