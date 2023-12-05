@@ -15,8 +15,8 @@ def create_parser():
     parser.add_argument('--seed', default=1, type=int)
 
     # dataset parameters
-    parser.add_argument('--batch_size', default=16, type=int, help='Batch size')
-    parser.add_argument('--val_batch_size', default=16, type=int, help='Batch size')
+    parser.add_argument('--batch_size', default=4, type=int, help='Batch size')
+    parser.add_argument('--val_batch_size', default=4, type=int, help='Batch size')
     parser.add_argument('--data_root', default='/scratch/sc10648/DL-Competition1/dataset/unlabeled')
     parser.add_argument('--dataname', default='moving_objects', choices=['moving_objects'])
     parser.add_argument('--num_workers', default=8, type=int)
@@ -30,9 +30,9 @@ def create_parser():
     parser.add_argument('--groups', default=4, type=int)
 
     # Training parameters
-    parser.add_argument('--epochs', default=51, type=int)
+    parser.add_argument('--epochs', default=4, type=int)
     parser.add_argument('--log_step', default=1, type=int)
-    parser.add_argument('--lr', default=0.01, type=float, help='Learning rate')
+    parser.add_argument('--lr', default=0.001, type=float, help='Learning rate')
     return parser
 
 
