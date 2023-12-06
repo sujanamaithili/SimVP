@@ -54,6 +54,11 @@ class MovingObjectDataSet(data.Dataset):
         past_clips = torch.stack(past_clips).permute(0, 3, 1, 2)
         future_clips = torch.stack(future_clips).permute(0, 3, 1, 2)
         #we want [11,3,160,240]
+        
+        # Print the image values
+        print("Past Clips:\n", past_clips)
+        print("Future Clips:\n", future_clips)
+
         return (past_clips).contiguous().float(), (future_clips).contiguous().float()
     def __len__(self):
         return self.length
