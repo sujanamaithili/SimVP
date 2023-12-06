@@ -56,8 +56,8 @@ class MovingObjectDataSet(data.Dataset):
         #we want [11,3,160,240]
         
         # Print the image values
-        print("Past Clips:\n", past_clips)
-        print("Future Clips:\n", future_clips)
+        # print("Past Clips:\n", past_clips)
+        # print("Future Clips:\n", future_clips)
 
         return (past_clips).contiguous().float(), (future_clips).contiguous().float()
     def __len__(self):
