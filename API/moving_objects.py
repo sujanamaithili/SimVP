@@ -70,8 +70,8 @@ def load_moving_object(batch_size, val_batch_size,data_root, num_workers):
     whole_data = MovingObjectDataSet(root=data_root, is_train=True, n_frames_input=11, n_frames_output=11)
 
     train_size = int(0.95 * len(whole_data))
-    val_size = int(0.04 * len(whole_data))
-    test_size = int(0.01 * len(whole_data))
+    val_size = int(0.05 * len(whole_data))
+    test_size = int(0.00 * len(whole_data))
     print(train_size, val_size, test_size)
     train_data, val_data, test_data = random_split(whole_data, [train_size, val_size, test_size], generator=torch.Generator().manual_seed(2021))
 
