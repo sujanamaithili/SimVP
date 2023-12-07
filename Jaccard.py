@@ -23,7 +23,7 @@ for i in range(1000, 2000):
     val_mask_tensor = torch.tensor(val_mask, dtype=torch.int32)
 
     # Compute Jaccard index
-    jaccard_index_value = jaccard_metric(y_pred_masks_tensor[i - 1000].unsqueeze(0), val_mask_tensor.unsqueeze(0))
+    jaccard_index_value = jaccard(y_pred_masks_tensor[i - 1000].unsqueeze(0), val_mask_tensor.unsqueeze(0))
     jaccard_indices.append(jaccard_index_value.item())
 
 # Calculate mean Jaccard index
