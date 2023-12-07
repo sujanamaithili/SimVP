@@ -15,8 +15,8 @@ def create_parser():
     parser.add_argument('--use_gpu', default=True, type=bool)
     parser.add_argument('--gpu', default=0, type=int)
     parser.add_argument('--seed', default=1, type=int)
-    parser.add_argument('--model1_path', default='/scratch/.../checkpoint.pth', type=str)
-    parser.add_argument('--model2_path', default='/scratch/.../unet1.pt', type=str)  # remind to give correct path
+    parser.add_argument('--model1_path', default='/scratch/sc10648/Unet/vanillaSimVP/SimVP/results/Debug/checkpoint.pth', type=str)
+    parser.add_argument('--model2_path', default='/scratch/sc10648/Unet/UNet/unet1.pt', type=str)  # remind to give correct path
 
 
     # dataset parameters
