@@ -41,10 +41,12 @@ class MovingObjectDataSet(data.Dataset):
     def __getitem__(self, index):
 
         video_folder = os.listdir(self.videos[index])
-        video_folder = sorted(video_folder, key=extract_image_num)
+        video_folder_wo_mask = [i for i in video_folder if 'mask' not in i]
+        video_folder = sorted(video_folder_wo_mask, key=extract_image_num)
         imgs = []
         for image in video_folder:
-            imgs.append(np.array(Image.open(self.videos[index] + '/' + image)))
+            if image.endswith('.png'):
+                imgs.append(np.array(Image.open(self.videos[index] + '/' + image)))
 
         #shape: torch.Size([10, 1, 64, 64])
         # print(len(imgs))
