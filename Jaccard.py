@@ -13,6 +13,9 @@ jaccard = torchmetrics.JaccardIndex(task="multiclass", num_classes=49)
 
 val_directory = '/scratch/sc10648/DL-Competition1/dataset/val'
 
+# List to store Jaccard indices
+jaccard_indices = []
+
 # Loop through each validation directory
 for i in range(1000, 2000):
     folder_path = join(val_directory, f'video_{i}')
