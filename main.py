@@ -1,6 +1,8 @@
 import argparse
 from exp import Exp
 
+from unet import *
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -13,11 +15,14 @@ def create_parser():
     parser.add_argument('--use_gpu', default=True, type=bool)
     parser.add_argument('--gpu', default=0, type=int)
     parser.add_argument('--seed', default=1, type=int)
+    parser.add_argument('--model1_path', default='/scratch/.../checkpoint.pth', type=str)
+    parser.add_argument('--model2_path', default='/scratch/.../unet1.pt', type=str)  # remind to give correct path
+
 
     # dataset parameters
     parser.add_argument('--batch_size', default=4, type=int, help='Batch size')
     parser.add_argument('--val_batch_size', default=4, type=int, help='Batch size')
-    parser.add_argument('--data_root', default='/scratch/sc10648/DL-Competition1/dataset/unlabeled')
+    parser.add_argument('--data_root', default='/scratch/sc10648/DL-Competition1/dataset/val')
     parser.add_argument('--dataname', default='moving_objects', choices=['moving_objects'])
     parser.add_argument('--num_workers', default=8, type=int)
 
