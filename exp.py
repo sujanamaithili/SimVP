@@ -1,4 +1,3 @@
-
 import os
 import os.path as osp
 import json
@@ -11,7 +10,6 @@ from tqdm import tqdm
 from API import *
 from utils import *
 
-
 class Exp:
     def __init__(self, args):
         super(Exp, self).__init__()
@@ -23,7 +21,7 @@ class Exp:
         print_log(output_namespace(self.args))
 
         self._get_data()
-        self._select_optimizer()
+        #self._select_optimizer()
         self._select_criterion()
 
     def _acquire_device(self):
@@ -39,6 +37,9 @@ class Exp:
     def _preparation(self):
         # seed
         set_seed(self.args.seed)
+
+        self.model1_path=self.args.model1_path
+
         # log and checkpoint
         self.path = osp.join(self.args.res_dir, self.args.ex_name)
         check_dir(self.path)
@@ -66,8 +67,7 @@ class Exp:
 
     def _get_data(self):
         config = self.args.__dict__
-        self.train_loader, self.vali_loader, self.test_loader, self.data_mean, self.data_std = load_data(**config)
-        self.vali_loader = self.test_loader if self.vali_loader is None else self.vali_loader
+        self.vali_loader,self.data_mean, self.data_std = load_data(**config)
 
     def _select_optimizer(self):
         self.optimizer = torch.optim.Adam(
