@@ -31,5 +31,5 @@ for i in range(1000, 2000):
 
 # Calculate mean Jaccard index
 mean_jaccard_index = np.mean(jaccard_indices)
-Print("Jaccard Index:", mean_jaccard_index)
+print("Jaccard Index:", mean_jaccard_index)
 
