@@ -7,25 +7,30 @@ def MAE(pred, true):
 def MSE(pred, true):
     return np.mean((pred-true)**2,axis=(0,1)).sum()
 
-# cite the `PSNR` code from E3d-LSTM, Thanks!
-# https://github.com/google/e3d_lstm/blob/master/src/trainer.py line 39-40
 def PSNR(pred, true):
-    mse = np.mean((np.uint8(pred * 255)-np.uint8(true * 255))**2)
+    mse = np.mean((np.uint8(pred)-np.uint8(true))**2)
     return 20 * np.log10(255) - 10 * np.log10(mse)
 
 def metric(pred, true, mean, std, return_ssim_psnr=False, clip_range=[0, 1]):
-    pred = pred*std + mean
-    true = true*std + mean
+    print('pred',type(pred))
+    print('true',type(true))
+    print('mean', mean)
+    print('std', std)
+    print('calling mae')
     mae = MAE(pred, true)
+    print(mae)
+    print('calling MSE')
     mse = MSE(pred, true)
+    print(mse)
 
     if return_ssim_psnr:
-        # pred = np.maximum(pred, clip_range[0])
-        # pred = np.minimum(pred, clip_range[1])
         ssim, psnr = 0, 0
+        #pred = np.squeeze(pred)
+        #true = np.squeeze(true)
+        print(pred.shape, true.shape)
         for b in range(pred.shape[0]):
             for f in range(pred.shape[1]):
-                ssim += cal_ssim(pred[b, f].swapaxes(0,2), true[b, f].swapaxes(0,2), data_range=255.0, channel_axis = 2)
+                ssim += cal_ssim(pred[b, f].swapaxes(0,2), true[b, f].swapaxes(0,2), data_range = 255.0, channel_axis = 2 )
                 psnr += PSNR(pred[b, f], true[b, f])
         ssim = ssim / (pred.shape[0] * pred.shape[1])
         psnr = psnr / (pred.shape[0] * pred.shape[1])
