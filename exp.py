@@ -86,87 +86,47 @@ class Exp:
         fw = open(os.path.join(self.checkpoints_path, name + '.pkl'), 'wb')
         pickle.dump(state, fw)
 
-    def train(self, args):
-        config = args.__dict__
-        recorder = Recorder(verbose=True)
+    def prediction_eval(self,args):
 
-        for epoch in range(config['epochs']):
-            train_loss = []
-            self.model.train()
-            train_pbar = tqdm(self.train_loader)
-
-            for batch_x, batch_y in train_pbar:
-                self.optimizer.zero_grad()
-                batch_x, batch_y = batch_x.to(self.device), batch_y.to(self.device)
-                pred_y = self.model(batch_x)
-
-                loss = self.criterion(pred_y, batch_y)
-                train_loss.append(loss.item())
-                train_pbar.set_description('train loss: {:.4f}'.format(loss.item()))
-
-                loss.backward()
-                self.optimizer.step()
-                self.scheduler.step()
-
-            train_loss = np.average(train_loss)
-
-            if epoch % args.log_step == 0:
-                with torch.no_grad():
-                    vali_loss = self.vali(self.vali_loader)
-                    if epoch % (args.log_step * 100) == 0:
-                        self._save(name=str(epoch))
-                print_log("Epoch: {0} | Train Loss: {1:.4f} Vali Loss: {2:.4f}\n".format(
-                    epoch + 1, train_loss, vali_loss))
-                recorder(vali_loss, self.model, self.path)
-
-        best_model_path = self.path + '/' + 'checkpoint.pth'
-        self.model.load_state_dict(torch.load(best_model_path))
-        return self.model
-
-    def vali(self, vali_loader):
+        self.model.load_state_dict(torch.load(self.model1_path))
         self.model.eval()
-        preds_lst, trues_lst, total_loss = [], [], []
-        vali_pbar = tqdm(vali_loader)
-        for i, (batch_x, batch_y) in enumerate(vali_pbar):
-            if i * batch_x.shape[0] > 1000:
-                break
+        inputs_lst, preds_lst ,last_frame_list= [], [],[]
+        vali_pbar = tqdm(self.vali_loader)
 
-            batch_x, batch_y = batch_x.to(self.device), batch_y.to(self.device)
-            pred_y = self.model(batch_x)
-            list(map(lambda data, lst: lst.append(data.detach().cpu().numpy()), [
-                 pred_y, batch_y], [preds_lst, trues_lst]))
-
-            loss = self.criterion(pred_y, batch_y)
-            vali_pbar.set_description(
-                'vali loss: {:.4f}'.format(loss.mean().item()))
-            total_loss.append(loss.mean().item())
-
-        total_loss = np.average(total_loss)
-        preds = np.concatenate(preds_lst, axis=0)
-        trues = np.concatenate(trues_lst, axis=0)
-        mse, mae, ssim, psnr = metric(preds, trues, 0, 1, True)
-        print_log('vali mse:{:.4f}, mae:{:.4f}, ssim:{:.4f}, psnr:{:.4f}'.format(mse, mae, ssim, psnr))
-        self.model.train()
-        return total_loss
-
-    def test(self, args):
-        self.model.eval()
-        inputs_lst, trues_lst, preds_lst = [], [], []
-        for batch_x, batch_y in self.test_loader:
+        for i,batch_x in enumerate(vali_pbar):
             pred_y = self.model(batch_x.to(self.device))
+            last_frame_y=pred_y[:,10,:,:,:]
             list(map(lambda data, lst: lst.append(data.detach().cpu().numpy()), [
-                 batch_x, batch_y, pred_y], [inputs_lst, trues_lst, preds_lst]))
+                batch_x,pred_y,last_frame_y], [inputs_lst, preds_lst,last_frame_list]))
+    
+        print("pred_y.shape:",pred_y.shape)
+        print("last_frame list len:",len(last_frame_list))
 
-        inputs, trues, preds = map(lambda data: np.concatenate(
-            data, axis=0), [inputs_lst, trues_lst, preds_lst])
+        inputs = np.concatenate(inputs_lst, axis=0)
+        preds = np.concatenate(preds_lst, axis=0)
 
-        folder_path = self.path+'/results/{}/sv/'.format(args.ex_name)
+        print("inputs and pred concatenated successfully")
+
+        last_frames = np.concatenate(last_frame_list, axis=0)
+
+        print("final last frame:",last_frames.shape)
+        print("concatenation complete")
+
+        folder_path = self.path + '/results/{}/sv/'.format(args.ex_name)
+        
+        print("folder path:",folder_path)
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
 
-        mse, mae, ssim, psnr = metric(preds, trues, self.test_loader.dataset.mean, self.test_loader.dataset.std, True)
-        print_log('mse:{:.4f}, mae:{:.4f}, ssim:{:.4f}, psnr:{:.4f}'.format(mse, mae, ssim, psnr))
+        print("directory made sucessfully:",folder_path)
 
-        for np_data in ['inputs', 'trues', 'preds']:
-            np.save(osp.join(folder_path, np_data + '.npy'), vars()[np_data])
-        return mse
+        np.save(osp.join(folder_path, 'inputs.npy'),inputs)
+
+        print("inputs saved successfully")
+        np.save(osp.join(folder_path, 'preds.npy'),preds)
+
+        print("preds saved successfully")
+        np.save(osp.join(folder_path, 'last_frames.npy'),last_frames)
+        
+        print("last_frames saved successfully")
+        print_log("Testing done successfully!")
