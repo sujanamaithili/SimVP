@@ -47,6 +47,7 @@ if __name__ == '__main__':
 
     exp = Exp(args)
     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>  start <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-    exp.train(args)
-    # print('>>>>>>>>>>>>>>>>>>>>>>>>>>>> testing <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-    # mse = exp.test(args)
+    print("Inside Start")
+    exp.prediction_eval(args)
+    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>> masking <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+    UNET_Module(args)
