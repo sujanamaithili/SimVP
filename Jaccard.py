@@ -4,7 +4,9 @@ import torchmetrics
 from os import listdir
 from os.path import isfile, join
 
-y_pred_masks = np.load('/scratch/sc10648/Unet/vanillaSimVP/Pipeline/results/numpy_y_pred_masks.npy')
+# y_pred_masks = np.load('/scratch/sc10648/Unet/vanillaSimVP/Pipeline/results/numpy_y_pred_masks.npy')
+
+y_pred_masks = np.load('/scratch/sc10648/Unet/ritika_openstl_results_epochs_5/y_pred_masks.npy')
 
 # Convert numpy array to torch tensors
 y_pred_masks_tensor = torch.tensor(y_pred_masks, dtype=torch.int32)
