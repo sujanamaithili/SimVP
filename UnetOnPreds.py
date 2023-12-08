@@ -110,6 +110,9 @@ class PredictionDataset(Dataset):
 preds = np.load('/scratch/sc10648/Unet/ritika_vanilla_results_epochs_5/preds.npy')
 preds_tensor = torch.tensor(preds, dtype=torch.float32)
 
+# Print the shape of input preds
+print("Shape of input preds:", preds.shape)
+
 #Give Unet Saved path here
 unet_model_saved_path='/scratch/sc10648/Unet/UNet/unet1.pt'
 
