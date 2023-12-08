@@ -95,6 +95,18 @@ class unet_model(nn.Module):
         return x
 
 
+# Dataset for predictions
+class PredictionDataset(Dataset):
+    def __init__(self, predictions):
+        self.predictions = predictions
+
+    def __len__(self):
+        return len(self.predictions)
+
+    def __getitem__(self, idx):
+        return self.predictions[idx]
+
+
 y_pred_masks = np.load('/scratch/sc10648/Unet/vanillaSimVP/Pipeline/results/numpy_y_pred_masks.npy')
 
 # Convert numpy array to torch tensors
