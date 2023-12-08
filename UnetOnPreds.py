@@ -10,23 +10,23 @@ from tqdm import tqdm
 from os import listdir
 from os.path import isfile, join
 
-class SegmentationDataSet(Dataset):
+# class SegmentationDataSet(Dataset):
 
-    def __init__(self, args,transform=None):
+#     def __init__(self, args,transform=None):
 
-        self.stored_images_path=args.res_dir+'/Debug/results/Debug/sv/last_frames.npy'
+#         self.stored_images_path=args.res_dir+'/Debug/results/Debug/sv/last_frames.npy'
 
-        print("last frames stored path::",self.stored_images_path)
+#         print("last frames stored path::",self.stored_images_path)
 
-        self.last_frames = np.load(self.stored_images_path) #(2000,1,3,160,240)
+#         self.last_frames = np.load(self.stored_images_path) #(2000,1,3,160,240)
         
-        print("last frames shape:", self.last_frames.shape)
+#         print("last frames shape:", self.last_frames.shape)
 
-    def __len__(self):
-        return len(self.last_frames)
+#     def __len__(self):
+#         return len(self.last_frames)
 
-    def __getitem__(self, index):
-        return self.last_frames[index]  # we want to return (3,160,240) this dimension
+#     def __getitem__(self, index):
+#         return self.last_frames[index]  # we want to return (3,160,240) this dimension
 
 class encoding_block(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -107,31 +107,28 @@ class PredictionDataset(Dataset):
         return self.predictions[idx]
 
 
-y_pred_masks = np.load('/scratch/sc10648/Unet/vanillaSimVP/Pipeline/results/numpy_y_pred_masks.npy')
+preds = np.load('path/to/preds.npy')
+preds_tensor = torch.tensor(preds, dtype=torch.float32)
 
-# Convert numpy array to torch tensors
-y_pred_masks_tensor = torch.tensor(y_pred_masks, dtype=torch.int32)
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+model = unet_model().to(DEVICE)
+m = torch.load(unet_model_saved_path).state_dict()
+model.load_state_dict(m)
+model.eval()
 
-jaccard = torchmetrics.JaccardIndex(task="multiclass", num_classes=49)
+# Create dataloader
+dataset = PredictionDataset(preds_tensor)
+dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
-val_directory = '/scratch/sc10648/DL-Competition1/dataset/val'
+masks_preds = []
+softmax = nn.Softmax(dim=1)
 
-# List to store Jaccard indices
-jaccard_indices = []
+with torch.no_grad():
+    for x in tqdm(dataloader):
+        x = x.type(torch.cuda.FloatTensor).to(DEVICE)
+        preds = torch.argmax(softmax(model(x)), axis=1)
+        masks_preds.append(preds.cpu().numpy())
 
-# Loop through each validation directory
-for i in range(1000, 2000):
-    folder_path = join(val_directory, f'video_{i}')
-    mask_path = join(folder_path, 'mask.npy')
-
-    # Load the 22nd mask from the validation data
-    val_mask = np.load(mask_path)[21]  # 22nd mask is at index 21
-    val_mask_tensor = torch.tensor(val_mask, dtype=torch.int32)
-
-    # Compute Jaccard index
-    jaccard_index_value = jaccard(y_pred_masks_tensor[i - 1000].unsqueeze(0), val_mask_tensor.unsqueeze(0))
-    jaccard_indices.append(jaccard_index_value.item())
-
-# Calculate mean Jaccard index
-mean_jaccard_index = np.mean(jaccard_indices)
-print("Jaccard Index:", mean_jaccard_index)
+# Convert list to numpy array and save
+y_pred_masks = np.array(masks_pred_list)
+np.save('/give/same/path/to/above/y_pred_masks.npy', y_pred_masks)
