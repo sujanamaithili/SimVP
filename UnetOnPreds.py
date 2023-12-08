@@ -137,6 +137,6 @@ with torch.no_grad():
         masks_preds.append(preds.cpu().numpy())
 
 # Convert list to numpy array and save
-y_pred_masks = np.array(masks_pred_list)
+y_pred_masks = np.array(masks_preds)
 print("Shape of y_pred_masks:", y_pred_masks.shape)
 np.save('/scratch/sc10648/Unet/ritika_vanilla_results_epochs_5/y_pred_masks.npy', y_pred_masks)
