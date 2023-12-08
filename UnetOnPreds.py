@@ -108,6 +108,7 @@ class PredictionDataset(Dataset):
 
 
 preds = np.load('/scratch/sc10648/Unet/ritika_vanilla_results_epochs_5/preds.npy')
+preds = preds[:, 10, :, :, :]
 preds_tensor = torch.tensor(preds, dtype=torch.float32)
 
 # Print the shape of input preds
