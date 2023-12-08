@@ -110,6 +110,9 @@ class PredictionDataset(Dataset):
 preds = np.load('path/to/preds.npy')
 preds_tensor = torch.tensor(preds, dtype=torch.float32)
 
+#Give Unet Saved path here
+unet_model_saved_path='/scratch/sc10648/Unet/UNet/unet1.pt'
+
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 model = unet_model().to(DEVICE)
 m = torch.load(unet_model_saved_path).state_dict()
