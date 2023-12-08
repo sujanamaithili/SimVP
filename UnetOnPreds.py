@@ -107,7 +107,7 @@ class PredictionDataset(Dataset):
         return self.predictions[idx]
 
 
-preds = np.load('path/to/preds.npy')
+preds = np.load('/scratch/sc10648/Unet/ritika_vanilla_results_epochs_5/preds.npy')
 preds_tensor = torch.tensor(preds, dtype=torch.float32)
 
 #Give Unet Saved path here
@@ -134,4 +134,5 @@ with torch.no_grad():
 
 # Convert list to numpy array and save
 y_pred_masks = np.array(masks_pred_list)
-np.save('/give/same/path/to/above/y_pred_masks.npy', y_pred_masks)
+print("Shape of y_pred_masks:", y_pred_masks.shape)
+np.save('/scratch/sc10648/Unet/ritika_vanilla_results_epochs_5/y_pred_masks.npy', y_pred_masks)
